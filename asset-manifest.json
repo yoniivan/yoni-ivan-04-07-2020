@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/yoni-ivan-04-05-2020/static/css/main.d34499fd.chunk.css",
+    "main.js": "/yoni-ivan-04-05-2020/static/js/main.156e5edf.chunk.js",
+    "main.js.map": "/yoni-ivan-04-05-2020/static/js/main.156e5edf.chunk.js.map",
+    "runtime-main.js": "/yoni-ivan-04-05-2020/static/js/runtime-main.78edada9.js",
+    "runtime-main.js.map": "/yoni-ivan-04-05-2020/static/js/runtime-main.78edada9.js.map",
+    "static/css/2.cb0e91aa.chunk.css": "/yoni-ivan-04-05-2020/static/css/2.cb0e91aa.chunk.css",
+    "static/js/2.4fca7e6c.chunk.js": "/yoni-ivan-04-05-2020/static/js/2.4fca7e6c.chunk.js",
+    "static/js/2.4fca7e6c.chunk.js.map": "/yoni-ivan-04-05-2020/static/js/2.4fca7e6c.chunk.js.map",
+    "index.html": "/yoni-ivan-04-05-2020/index.html",
+    "precache-manifest.1072841f8162e989d4bfa83710c70c85.js": "/yoni-ivan-04-05-2020/precache-manifest.1072841f8162e989d4bfa83710c70c85.js",
+    "service-worker.js": "/yoni-ivan-04-05-2020/service-worker.js",
+    "static/css/2.cb0e91aa.chunk.css.map": "/yoni-ivan-04-05-2020/static/css/2.cb0e91aa.chunk.css.map",
+    "static/css/main.d34499fd.chunk.css.map": "/yoni-ivan-04-05-2020/static/css/main.d34499fd.chunk.css.map",
+    "static/js/2.4fca7e6c.chunk.js.LICENSE.txt": "/yoni-ivan-04-05-2020/static/js/2.4fca7e6c.chunk.js.LICENSE.txt",
+    "static/media/15-s.png": "/yoni-ivan-04-05-2020/static/media/15-s.39ac499c.png",
+    "static/media/16-s.png": "/yoni-ivan-04-05-2020/static/media/16-s.0cf9cad1.png",
+    "static/media/17-s.png": "/yoni-ivan-04-05-2020/static/media/17-s.3c85da3e.png",
+    "static/media/41-s.png": "/yoni-ivan-04-05-2020/static/media/41-s.421c13f1.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.78edada9.js",
+    "static/css/2.cb0e91aa.chunk.css",
+    "static/js/2.4fca7e6c.chunk.js",
+    "static/css/main.d34499fd.chunk.css",
+    "static/js/main.156e5edf.chunk.js"
+  ]
+}
