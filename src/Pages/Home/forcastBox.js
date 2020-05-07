@@ -17,7 +17,7 @@ const forcastBox = (props) => {
     let singleBox = null;
     if(props.list !== undefined){
         singleBox = props.list.map((data, index) => {
-            let icon = data.iconNight;
+            let icon = data.iconDay;
             if(icon > 9){
                 icon = icon + "-s.png";
             }else{

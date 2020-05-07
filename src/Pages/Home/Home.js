@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actionTypes from '../Store/Actions';
 import './home.css'
+import axios from '../../Utils/Axios';
 import SearchCity from './SearchCity';
 import CountriesList from './CountryList';
 import AlertPopUP from '../Error/errorPopUp';
 import ForcastBox from './forcastBox';
 import LeftRightDivs from './leftRightDivs';
-import * as api from '../../Utils/services';
 import ToastMsg from '../../Utils/Toast';
 import { Spinner } from 'react-bootstrap';
 
@@ -15,43 +15,38 @@ class HomePage extends Component{
 
     componentDidMount(){
         if(this.props.cityName === ""){
-            this.api_lat_long();
+            this.GET_API_LAT_LONG();
         }
         this.iconWeatherCondition()
-        this.api_weather(this.props.cityCode);
-        this.api_forcast(this.props.cityCode);
+        this.GET_API_WEATHER(this.props.cityCode);
+        this.GET_API_FORCAST(this.props.cityCode); 
     }
 
-    api_lat_long = () => {
-        api.GET_API_LAT_LONG().then(res => {
-            const params = {
-                cityName: res.data.LocalizedName,
-            }
-            this.props.cityNameInit(params)
-        }).catch(err => {
-            console.log(err.message)
-            this.errorHandle(err.message, false);
-        })
-    }
+    API_KEY = "?apikey=DvHOnCEuTEC9bTbQYY0ekGPllp93RkYO";
+    API_URL_AUTO = "/locations/v1/cities/autocomplete";
+    API_URL_WEATHER = "/currentconditions/v1/";
+    API_URL_FORCAST = "/forecasts/v1/daily/5day/";
+    API_URL_GEOLOCATION = "/locations/v1/cities/geoposition/search"
 
-    api_weather = (param) => {
-        api.GET_API_WEATHER(param).then(res => {
-            const params = {
-                temp: res.data[0].Temperature.Metric.Value,
-                Unit: res.data[0].Temperature.Metric.Unit,
-                WeatherText: res.data[0].WeatherText,
-            }
-            this.props.searchListEmpty();
-            this.props.searchSaveParams(params);
+    GET_API_COUNTRIES = (param) => {
+        this.props.searchListEmpty();
+        axios.get(this.API_URL_AUTO + this.API_KEY + param).then(res => {
+            res.data.map(param => {
+                const listParams = {
+                    cityCode: param.Key,
+                    text: param.LocalizedName, 
+                }
+                this.props.searchListAdd(listParams);
+                return null;
+            });
         }).catch(err => {
-            console.log(err.message)
             this.errorHandle(err.message, false);
         });
     }
 
-    api_forcast = (param) => {
+    GET_API_FORCAST = (param) => {
         const forcastArr = [];
-        api.GET_API_FORCAST(param).then(res => {
+        axios.get(this.API_URL_FORCAST + param + this.API_KEY).then(res => {
             res.data.DailyForecasts.map(arr => {
                 const params = {
                     date: arr.Date,
@@ -67,29 +62,40 @@ class HomePage extends Component{
                     temperatureMaxUnitType: arr.Temperature.Minimum.UnitType,
                     unit: this.props.unit,
                 }
+    
                 forcastArr.push(params);
                 return null;
             });
             this.props.forcastListAdd(forcastArr);
         }).catch(err => {
-            console.log(err.message)
             this.errorHandle(err.message, false);
         })
     }
 
-    api_countries = (param) => {
-        this.props.searchListEmpty();
-        api.GET_API_COUNTRIES(param).then(res => {
-            res.data.map(param => {
-                const listParams = {
-                    cityCode: param.Key,
-                    text: param.LocalizedName, 
-                }
-                this.props.searchListAdd(listParams);
-                return null;
-            });
+    GET_API_LAT_LONG = async() => {
+        const position = await this.getPosition();
+        axios.get(this.API_URL_GEOLOCATION + this.API_KEY + "&q=" + position.coords.latitude + "%2C%20" + position.coords.longitude).then(res => {
+            const params = {
+                cityName: res.data.LocalizedName,
+            }
+            this.props.cityNameInit(params)
         }).catch(err => {
-            console.log(err.message)
+            this.errorHandle(err.message, false);
+        });
+    }
+
+    GET_API_WEATHER = (key) => {
+        axios.get(this.API_URL_WEATHER + key + this.API_KEY).then(res => {
+            const params = {
+                temp: res.data[0].Temperature.Metric.Value,
+                Unit: res.data[0].Temperature.Metric.Unit,
+                WeatherText: res.data[0].WeatherText,
+                iconNumber: res.data[0].WeatherIcon,
+            }
+            this.props.searchListEmpty();
+            this.props.searchSaveParams(params);           
+
+        }).catch(err => {
             this.errorHandle(err.message, false);
         });
     }
@@ -113,16 +119,16 @@ class HomePage extends Component{
         this.setState({alert: flag});
     };
 
-    // getPosition = () => {
-    //     return new Promise((res, rej) => {
-    //         if('geolocation' in navigator){
-    //             navigator.geolocation.getCurrentPosition(res, rej);
+    getPosition = () => {
+        return new Promise((res, rej) => {
+            if('geolocation' in navigator){
+                navigator.geolocation.getCurrentPosition(res, rej);
                 
-    //         }else{
-    //             // TODO
-    //         }
-    //     });
-    // }
+            }else{
+                // TODO
+            }
+        });
+    }
 
     formHandler = (e) => {
         let value = e.target.value.replace(/[^A-Za-z]/ig, '')
@@ -131,7 +137,7 @@ class HomePage extends Component{
         if(e.target.value.length > 1){
             const country = "&q=" + e.target.value;
             this.props.searchListEmpty();
-            this.api_countries(country);
+            this.GET_API_COUNTRIES(country);
         }
     }
 
@@ -139,15 +145,15 @@ class HomePage extends Component{
         const countyKey = this.props.searchList[0].cityCode;
         const country = "&q=" + item;
         this.props.searchListEmpty();
-        this.api_countries(country);
+        this.GET_API_COUNTRIES(country);
         const params = {
             cityName: item,
             cityCode: countyKey,
         };
         this.props.searchSaveCity(params);
         this.setState({formValue: item});
-        this.api_weather(countyKey);
-        this.api_forcast(countyKey);
+        this.GET_API_WEATHER(countyKey);
+        this.GET_API_FORCAST(countyKey);
     }
 
     favHandler = () => {
@@ -283,10 +289,10 @@ class HomePage extends Component{
         return(
             
             <div>
-                {/* {!this.state.alert ? 
+                {!this.state.alert ? 
                 <AlertPopUP
                     alertMessage={this.state.alertMsg}
-                /> :  */}
+                /> : 
                 <div>
                 <div className="searchCity">
                     <SearchCity
@@ -328,7 +334,7 @@ class HomePage extends Component{
                     />
                 </div>
             </div>
-            {/* } */}
+            }
         </div>
         )
     }
