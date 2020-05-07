@@ -1,0 +1,33 @@
+.favoritesList{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.singleFav{
+    border: solid black 1px;
+    margin: 1rem;
+}
+
+.singleFav:hover{
+    transition: 0.3s;
+    color: darkred;
+    transform: scale(1.1);
+    font-weight: bold;
+}
+
+.favCity{
+    font-size: xx-large;
+}
+
+.favCity{
+    text-align: center;
+}
+
+.favDeg{
+    text-align: center;
+}
+
+.favText{
+    text-align: center;
+}

@@ -1,0 +1,142 @@
+.searchCity{
+    width: 50%;
+    margin: 0px auto;
+    margin-bottom: 3rem;
+}
+
+.selectedCity{
+    width: 70%;
+    margin: 0px auto;
+    background-color: whitesmoke;
+    border: black 1px solid;
+}
+
+.boxes{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.singleBox{
+    margin-bottom: 3rem;
+}
+
+.selectedSecond h1:hover{
+    transition: 0.3s;
+    color: blue;
+    transform: scale(1.1);
+    font-weight: bold;
+}
+
+.singleBox:hover{
+    transition: 0.3s;
+    transform: scale(1.1);
+}
+
+.singleBox h3{
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    color: white;
+}
+
+
+.singleBox p{
+    text-align: center;
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.searchedFirst{
+    display: flex;
+}
+
+.selectedSecond{
+    text-align: center;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+}
+
+.left{
+    display: flex;
+    justify-content: center;
+    width: 70%;
+    padding: 3rem;
+}
+
+.right{
+    display: flex;
+    justify-content: center;
+    width: 30%;
+    padding: 3rem;
+    background-color: slategrey;
+}
+
+.right h3{
+    font-size: xx-large;
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.left h1{
+    font-size: xxx-large;
+    padding: 1rem;
+    color: white;
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.left p{
+    font-weight: bold;
+    font-size: x-large;
+    color: white;
+}
+
+.toastMsg{
+    position: absolute;
+    margin: 1rem;
+}
+
+
+
+
+@media (max-width: 600px) {
+    .searchCity{
+        width: 90%;
+        margin: 0px auto;
+    }
+
+    .boxes{
+        display: block;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .singleBox h3{
+        text-align: center;
+    }
+
+    .selectedCity{
+        width: 90%;
+        margin-top: 1rem;;
+    }
+
+    .searchedFirst{
+        display: block;
+    }
+
+    .left{
+        display: inherit;
+        width: auto;
+    }
+
+    .left h1{
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .right{
+        width: auto;
+
+    }
+}
