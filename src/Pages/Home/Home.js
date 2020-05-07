@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actionTypes from '../Store/Actions';
 import './home.css'
-import axios from '../../Utils/Axios'
 import SearchCity from './SearchCity';
 import CountriesList from './CountryList';
 import AlertPopUP from '../Error/errorPopUp';
