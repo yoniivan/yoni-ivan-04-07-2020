@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actionTypes from '../Store/Actions';
 import './home.css'
-import axios from '../../Utils/Axios';
 import SearchCity from './SearchCity';
 import CountriesList from './CountryList';
 import AlertPopUP from '../Error/errorPopUp';
@@ -10,27 +9,36 @@ import ForcastBox from './forcastBox';
 import LeftRightDivs from './leftRightDivs';
 import ToastMsg from '../../Utils/Toast';
 import { Spinner } from 'react-bootstrap';
+import * as API from '../../Utils/services'; 
 
 class HomePage extends Component{
 
     componentDidMount(){
         if(this.props.cityName === ""){
-            this.GET_API_LAT_LONG();
+            this.get_lat_long();
         }
         this.iconWeatherCondition()
-        this.GET_API_WEATHER(this.props.cityCode);
-        this.GET_API_FORCAST(this.props.cityCode); 
+        this.get_weather(this.props.cityCode);
+        this.get_forcast(this.props.cityCode); 
     }
 
-    API_KEY = "?apikey=DvHOnCEuTEC9bTbQYY0ekGPllp93RkYO";
-    API_URL_AUTO = "/locations/v1/cities/autocomplete";
-    API_URL_WEATHER = "/currentconditions/v1/";
-    API_URL_FORCAST = "/forecasts/v1/daily/5day/";
-    API_URL_GEOLOCATION = "/locations/v1/cities/geoposition/search"
+    state = {
+        formValue: '',
 
-    GET_API_COUNTRIES = (param) => {
+        alert: true,
+        alertMsg: null,
+
+        unit: null,
+        degree: null,
+        icon: null,
+
+        toastMsg: false,
+        toastText: null,
+    }
+
+    get_countries = (param) => {
         this.props.searchListEmpty();
-        axios.get(this.API_URL_AUTO + this.API_KEY + param).then(res => {
+        const api = API.GET_COUNTRIES(param).then(res => {
             res.data.map(param => {
                 const listParams = {
                     cityCode: param.Key,
@@ -42,11 +50,12 @@ class HomePage extends Component{
         }).catch(err => {
             this.errorHandle(err.message, false);
         });
+        return api;
     }
 
-    GET_API_FORCAST = (param) => {
+    get_forcast = (param) => {
         const forcastArr = [];
-        axios.get(this.API_URL_FORCAST + param + this.API_KEY).then(res => {
+        const api = API.GET_FORCAST(param).then(res => {
             res.data.DailyForecasts.map(arr => {
                 const params = {
                     date: arr.Date,
@@ -62,19 +71,19 @@ class HomePage extends Component{
                     temperatureMaxUnitType: arr.Temperature.Minimum.UnitType,
                     unit: this.props.unit,
                 }
-    
+                
                 forcastArr.push(params);
                 return null;
             });
             this.props.forcastListAdd(forcastArr);
         }).catch(err => {
             this.errorHandle(err.message, false);
-        })
+        });
+        return api;
     }
 
-    GET_API_LAT_LONG = async() => {
-        const position = await this.getPosition();
-        axios.get(this.API_URL_GEOLOCATION + this.API_KEY + "&q=" + position.coords.latitude + "%2C%20" + position.coords.longitude).then(res => {
+    get_lat_long = () => {
+        const api = API.GET_LAT_LONG().then(res => {
             const params = {
                 cityName: res.data.LocalizedName,
             }
@@ -82,10 +91,11 @@ class HomePage extends Component{
         }).catch(err => {
             this.errorHandle(err.message, false);
         });
+        return api;
     }
 
-    GET_API_WEATHER = (key) => {
-        axios.get(this.API_URL_WEATHER + key + this.API_KEY).then(res => {
+    get_weather = (key) => {
+        const api = API.GET_WEATHER(key).then(res => {
             const params = {
                 temp: res.data[0].Temperature.Metric.Value,
                 Unit: res.data[0].Temperature.Metric.Unit,
@@ -93,42 +103,17 @@ class HomePage extends Component{
                 iconNumber: res.data[0].WeatherIcon,
             }
             this.props.searchListEmpty();
-            this.props.searchSaveParams(params);           
-
+            this.props.searchSaveParams(params); 
         }).catch(err => {
             this.errorHandle(err.message, false);
         });
-    }
-
-    state = {
-        formValue: '',
-
-        alert: true,
-        alertMsg: null,
-
-        unit: null,
-        degree: null,
-        icon: null,
-
-        toastMsg: false,
-        toastText: "yoni"
+        return api
     }
 
     errorHandle = (msg, flag) => {
         this.setState({alertMsg: msg})
         this.setState({alert: flag});
     };
-
-    getPosition = () => {
-        return new Promise((res, rej) => {
-            if('geolocation' in navigator){
-                navigator.geolocation.getCurrentPosition(res, rej);
-                
-            }else{
-                // TODO
-            }
-        });
-    }
 
     formHandler = (e) => {
         let value = e.target.value.replace(/[^A-Za-z]/ig, '')
@@ -137,7 +122,7 @@ class HomePage extends Component{
         if(e.target.value.length > 1){
             const country = "&q=" + e.target.value;
             this.props.searchListEmpty();
-            this.GET_API_COUNTRIES(country);
+            this.get_countries(country);
         }
     }
 
@@ -145,15 +130,15 @@ class HomePage extends Component{
         const countyKey = this.props.searchList[0].cityCode;
         const country = "&q=" + item;
         this.props.searchListEmpty();
-        this.GET_API_COUNTRIES(country);
+        this.get_countries(country);
         const params = {
             cityName: item,
             cityCode: countyKey,
         };
         this.props.searchSaveCity(params);
         this.setState({formValue: item});
-        this.GET_API_WEATHER(countyKey);
-        this.GET_API_FORCAST(countyKey);
+        this.get_weather(countyKey);
+        this.get_forcast(countyKey);
     }
 
     favHandler = () => {
@@ -199,7 +184,6 @@ class HomePage extends Component{
             }
         }
     }
-
     // Fahrenheit / Celsius TOGGLE
     unitHandle = (e) => {
         let cutrrentTemp = null;
@@ -285,9 +269,7 @@ class HomePage extends Component{
                 this.setState({toastMsg: false});
             }, 3000)
         }
-
         return(
-            
             <div>
                 {!this.state.alert ? 
                 <AlertPopUP
